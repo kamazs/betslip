@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "build": "webpack"
+    "start": "start http://localhost:3001 & nodemon server.js",
+    "build": "webpack --colors --progress --watch"
   },
   "author": "Mārtiņš Ceplis",
   "license": "ISC",
@@ -26,6 +26,9 @@
     "babel-plugin-transform-react-jsx": "^6.8.0",
     "babel-preset-latest": "^6.16.0",
     "babel-preset-react": "^6.16.0",
+    "css-loader": "^0.26.0",
+    "nodemon": "^1.11.0",
+    "style-loader": "^0.13.1",
     "webpack": "^1.13.3"
   }
 }
