@@ -8,8 +8,7 @@ export default (state=[], action) => {
                 id: action.id,
                 value: 0, 
                 selected: false, 
-                odd: action.odd,
-                topIdx: 0
+                odd: action.odd
             };
             return [
                 ...state,
@@ -24,7 +23,7 @@ export default (state=[], action) => {
         case "UPDATE_ODD":
             return getUpdatedState(state, action.id, { odd: action.odd });
         case "UPDATE_SELECTED":
-            return getUpdatedState(state, action.id, { selected: action.selected, topIdx: action.topIdx });
+            return getUpdatedState(state, action.id, { selected: action.selected });
         default:
             return state;
     }
