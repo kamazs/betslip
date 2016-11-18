@@ -2,6 +2,9 @@ const app = require("express")();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
 
+const maxInterval = 2000;
+const oddCount = 12;
+
 app.get("/", (req,res)=>{
     res.sendFile(__dirname + "/public/index.html");
 });
@@ -15,16 +18,13 @@ http.listen(3001, ()=>{
     console.log("Betslip server started. Listening on *:3001");
 });
 
-const initialOdds = [
-    { id: 0, odd: 0.23},
-    { id: 1, odd: 0.21},
-    { id: 2, odd: 0.05},
-    { id: 3, odd: 0.9},
-    { id: 4, odd: 0.35},
-    { id: 5, odd: 0.78},
-    { id: 6, odd: 0.5},
-    { id: 7, odd: 0.43}
-];
+let initialOdds = [];
+for (let i = 0; i<oddCount; i++){
+    initialOdds.push({
+        id: i,
+        odd: Math.random()
+    });
+}
 
 io.on("connection", socket => {
     console.log("User connected!");
@@ -39,7 +39,7 @@ var updateOdds = () => {
         odd: Math.random()
     });
     console.log("Random update! id: ", id);
-    setTimeout(updateOdds, Math.random()*10000)
+    setTimeout(updateOdds, Math.random()*maxInterval)
 }
 
 updateOdds();

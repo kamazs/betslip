@@ -15,15 +15,28 @@ export default (state=[], action) => {
                 newOdd
             ];
         case "UPDATE_VALUE":
-            let params = { value: action.value };
-            if (action.value>0) {
-                params.selected = true;
-            }
-            return getUpdatedState(state, action.id, params);
+            return getUpdatedState(state, action.id, { value: action.value });
         case "UPDATE_ODD":
             return getUpdatedState(state, action.id, { odd: action.odd });
         case "UPDATE_SELECTED":
-            return getUpdatedState(state, action.id, { selected: action.selected });
+            let selected = state.find(x=>x.id===action.id);
+            if (!selected){
+                return state;
+            }
+            let idx = state.indexOf(selected);
+            if (idx<0){
+                console.log("ERROR! Why idx not found?");
+                return state;
+            }
+
+            let newSelected = Object.assign({}, selected);
+            newSelected.selected = true;
+            
+            return [
+                newSelected,
+                ...state.slice(0, idx),
+                ...state.slice(idx + 1)
+            ];
         default:
             return state;
     }

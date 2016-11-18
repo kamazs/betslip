@@ -10,7 +10,7 @@ export default class App extends Component {
                 <h1 className={styles.allOddsHeading}>ALL ODDS</h1>
                 <ul className={styles.bulletless}>
                     { this.props.data && 
-                        this.props.data.map(
+                        this.props.data.slice().sort((a,b)=>a.id-b.id).map(
                             odd=>
                                 <li key={odd.id}> 
                                     <Odd 

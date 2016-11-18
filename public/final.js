@@ -75,12 +75,20 @@
 	var render = function render() {
 	    return _reactDom2.default.render(_react2.default.createElement(_App2.default, {
 	        data: store.getState(),
-	        onUpdate: function onUpdate(id, newValue) {
-	            return store.dispatch({
+	        onUpdate: function onUpdate(id, newValue, selected) {
+	            store.dispatch({
 	                type: "UPDATE_VALUE",
 	                id: id,
 	                value: newValue
 	            });
+
+	            if (newValue && !selected) {
+	                store.dispatch({
+	                    type: "UPDATE_SELECTED",
+	                    id: id,
+	                    selected: true
+	                });
+	            }
 	        },
 	        onSelect: function onSelect(id) {
 	            return store.dispatch({
@@ -29019,7 +29027,9 @@
 	                    _react2.default.createElement(
 	                        "ul",
 	                        { className: _app2.default.bulletless },
-	                        this.props.data && this.props.data.map(function (odd) {
+	                        this.props.data && this.props.data.slice().sort(function (a, b) {
+	                            return a.id - b.id;
+	                        }).map(function (odd) {
 	                            return _react2.default.createElement(
 	                                "li",
 	                                { key: odd.id },
@@ -29103,6 +29113,11 @@
 
 	        var _this = _possibleConstructorReturn(this, (Odd.__proto__ || Object.getPrototypeOf(Odd)).call(this, props));
 
+	        _this.state = {
+	            value: 0,
+	            activated: false
+	        };
+
 	        _this.onChange = _this.onChange.bind(_this);
 	        _this.onInputClick = _this.onInputClick.bind(_this);
 	        _this.onSelectClick = _this.onSelectClick.bind(_this);
@@ -29110,9 +29125,34 @@
 	    }
 
 	    _createClass(Odd, [{
+	        key: "componentWillReceiveProps",
+	        value: function componentWillReceiveProps(props) {
+	            var _this2 = this;
+
+	            if (props.value) {
+	                this.setState({
+	                    value: props.value
+	                });
+	            }
+	            if (props.odd != this.props.odd) {
+	                this.setState({
+	                    activated: true
+	                });
+	                setTimeout(function () {
+	                    return _this2.setState({
+	                        activated: false
+	                    });
+	                }, 2000);
+	            }
+	        }
+	    }, {
 	        key: "onChange",
 	        value: function onChange(e) {
-	            this.props.onChangeValue(this.props.id, e.currentTarget.value);
+	            if (!this.props.onChangeValue) {
+	                return;
+	            }
+	            var newValue = Math.abs(+e.currentTarget.value);
+	            this.props.onChangeValue(this.props.id, newValue, this.props.selected);
 	        }
 	    }, {
 	        key: "onInputClick",
@@ -29122,6 +29162,9 @@
 	    }, {
 	        key: "onSelectClick",
 	        value: function onSelectClick(e) {
+	            if (!this.props.onSelect) {
+	                return;
+	            }
 	            this.props.onSelect(this.props.id);
 	        }
 	    }, {
@@ -29137,7 +29180,7 @@
 	                ),
 	                _react2.default.createElement(
 	                    "span",
-	                    { className: _odd2.default.odd, onClick: this.onSelectClick },
+	                    { className: this.state.activated ? _odd2.default.oddActivated : _odd2.default.odd, onClick: this.onSelectClick },
 	                    " ",
 	                    this.props.odd.toFixed(2),
 	                    " "
@@ -29145,9 +29188,9 @@
 	                _react2.default.createElement(
 	                    "span",
 	                    null,
-	                    " Amount: "
+	                    " BET: "
 	                ),
-	                _react2.default.createElement("input", { className: _odd2.default.oddInput, value: this.props.value, id: "amount", onChange: this.onChange, onClick: this.onInputClick })
+	                _react2.default.createElement("input", { type: "number", className: _odd2.default.oddInput, value: this.state.value, id: "amount", onChange: this.onChange, onClick: this.onInputClick })
 	            );
 	        }
 	    }]);
@@ -29192,15 +29235,17 @@
 
 
 	// module
-	exports.push([module.id, "@keyframes odd__update___2-MHf {\r\n    from {opacity:0}\r\n    to { opacity: 1}\r\n}\r\n\r\n.odd__oddContainer___28Wnn {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-around;\r\n    align-items: center;\r\n    padding: 5px;\r\n    margin: 5px;\r\n    background-color: dodgerblue;\r\n    color: white;\r\n    border-radius: 5px;\r\n    font-family: Arial, Helvetica, sans-serif;\r\n    width: 360px;\r\n    animation-name: odd__update___2-MHf;\r\n    animation-duration: 1s;\r\n}\r\n\r\n.odd__selectedOdd___NPjM2 {\r\n    background-color:springgreen;\r\n}\r\n\r\n.odd__oddInput___3PuVV {\r\n    padding: 2px;\r\n    font-family: Arial, Helvetica, sans-serif;\r\n    font-weight: bold;\r\n    border: none;\r\n    border-radius: 5px;\r\n}\r\n\r\n.odd__oddInput___3PuVV:focus {\r\n    background-color: lightblue;\r\n}\r\n\r\n.odd__odd___1HvbG {\r\n    border: 1px solid white;\r\n    font-family: Arial, Helvetica, sans-serif;\r\n    font-weight: bolder;\r\n    background-color: white;\r\n    color: black;\r\n    margin: 0px 5px;\r\n    padding: 2px;\r\n    cursor: pointer;\r\n    transition: 0.75s;\r\n}\r\n\r\n.odd__odd___1HvbG:hover {\r\n    transform: scale(1.15); \r\n}", ""]);
+	exports.push([module.id, "@keyframes odd__appear___EWStk {\r\n    from {opacity:0}\r\n    to { opacity: 1}\r\n}\r\n\r\n.odd__oddContainer___28Wnn {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: space-around;\r\n    align-items: center;\r\n    padding: 5px;\r\n    margin: 5px;\r\n    background-color: dodgerblue;\r\n    color: white;\r\n    border-radius: 5px;\r\n    font-family: Arial, Helvetica, sans-serif;\r\n    width: 360px;\r\n    animation-name: odd__appear___EWStk;\r\n    animation-duration: 1s;\r\n    transition-duration: 0.5s;\r\n}\r\n\r\n.odd__oddContainer___28Wnn:hover {\r\n    transform: translateX(5px);\r\n    cursor: pointer;\r\n}\r\n\r\n.odd__selectedOdd___NPjM2 {\r\n    background-color:springgreen;\r\n}\r\n\r\n.odd__oddInput___3PuVV {\r\n    padding: 2px;\r\n    font-family: Arial, Helvetica, sans-serif;\r\n    font-weight: bold;\r\n    border: none;\r\n    border-radius: 5px;\r\n}\r\n\r\n.odd__oddInput___3PuVV:focus {\r\n    background-color: lightblue;\r\n}\r\n\r\n@keyframes odd__update___2-MHf {\r\n    from {\r\n        background-color: springgreen;\r\n    }\r\n    to {\r\n        background-color: white;\r\n    };\r\n}\r\n\r\n.odd__odd___1HvbG {\r\n    border: 1px solid white;\r\n    font-family: Arial, Helvetica, sans-serif;\r\n    font-weight: bolder;\r\n    background-color: white;\r\n    color: black;\r\n    margin: 0px 5px;\r\n    padding: 2px;\r\n    cursor: pointer;\r\n}\r\n\r\n.odd__oddActivated___3mNws {\r\n    background-color: white;\r\n    animation: odd__update___2-MHf 2s;\r\n}\r\n\r\n.odd__odd___1HvbG:hover {\r\n    transition: 0.75s;\r\n    transform: scale(1.15); \r\n}", ""]);
 
 	// exports
 	exports.locals = {
 		"oddContainer": "odd__oddContainer___28Wnn",
-		"update": "odd__update___2-MHf",
+		"appear": "odd__appear___EWStk",
 		"selectedOdd": "odd__selectedOdd___NPjM2 odd__oddContainer___28Wnn",
 		"oddInput": "odd__oddInput___3PuVV",
-		"odd": "odd__odd___1HvbG"
+		"odd": "odd__odd___1HvbG",
+		"oddActivated": "odd__oddActivated___3mNws odd__odd___1HvbG",
+		"update": "odd__update___2-MHf"
 	};
 
 /***/ },
@@ -29546,7 +29591,7 @@
 
 
 	// module
-	exports.push([module.id, "ul.app__bulletless___iVHh0 {\r\n    list-style-type: none;\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\nbody {\r\n    background-color:  #1A1A1A;\r\n}\r\n\r\n.app__container___sx3fk {\r\n    display: flex;\r\n    flex-direction: row;\r\n    background-color: #1A1A1A;\r\n}\r\n\r\n.app__containerPane___1_bFT {\r\n    display: block;\r\n    width: 380px;\r\n    padding: 10px;\r\n}\r\n\r\n.app__paneHeading___3bh8k {\r\n    margin: auto;\r\n    font-family: Arial, Helvetica, sans-serif;\r\n    text-align: center;\r\n    color: white;\r\n    margin-bottom: 20px;\r\n}\r\n\r\n.app__allOddsHeading___BhM9I {\r\n    background-color: lightsteelblue;\r\n}\r\n\r\n.app__selectedOddsHeading___3iitD {\r\n    background-color: lightgreen;\r\n}", ""]);
+	exports.push([module.id, "ul.app__bulletless___iVHh0 {\r\n    list-style-type: none;\r\n    margin: 0;\r\n    padding: 0;\r\n}\r\n\r\nbody {\r\n    background-color:  #1A1A1A;\r\n}\r\n\r\n.app__container___sx3fk {\r\n    display: flex;\r\n    flex-direction: row;\r\n    justify-content: center;\r\n    background-color: #1A1A1A;\r\n}\r\n\r\n.app__containerPane___1_bFT {\r\n    display: block;\r\n    width: 380px;\r\n    padding: 10px;\r\n}\r\n\r\n.app__paneHeading___3bh8k {\r\n    margin: auto;\r\n    font-family: Arial, Helvetica, sans-serif;\r\n    text-align: center;\r\n    color: white;\r\n    margin-bottom: 20px;\r\n}\r\n\r\n.app__allOddsHeading___BhM9I {\r\n    background-color: lightsteelblue;\r\n}\r\n\r\n.app__selectedOddsHeading___3iitD {\r\n    background-color: lightgreen;\r\n}", ""]);
 
 	// exports
 	exports.locals = {
@@ -30602,20 +30647,30 @@
 	                id: action.id,
 	                value: 0,
 	                selected: false,
-	                odd: action.odd,
-	                topIdx: 0
+	                odd: action.odd
 	            };
 	            return [].concat(_toConsumableArray(state), [newOdd]);
 	        case "UPDATE_VALUE":
-	            var params = { value: action.value };
-	            if (action.value > 0) {
-	                params.selected = true;
-	            }
-	            return getUpdatedState(state, action.id, params);
+	            return getUpdatedState(state, action.id, { value: action.value });
 	        case "UPDATE_ODD":
 	            return getUpdatedState(state, action.id, { odd: action.odd });
 	        case "UPDATE_SELECTED":
-	            return getUpdatedState(state, action.id, { selected: action.selected, topIdx: action.topIdx });
+	            var selected = state.find(function (x) {
+	                return x.id === action.id;
+	            });
+	            if (!selected) {
+	                return state;
+	            }
+	            var idx = state.indexOf(selected);
+	            if (idx < 0) {
+	                console.log("ERROR! Why idx not found?");
+	                return state;
+	            }
+
+	            var newSelected = Object.assign({}, selected);
+	            newSelected.selected = true;
+
+	            return [newSelected].concat(_toConsumableArray(state.slice(0, idx)), _toConsumableArray(state.slice(idx + 1)));
 	        default:
 	            return state;
 	    }
