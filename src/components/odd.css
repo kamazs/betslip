@@ -1,0 +1,41 @@
+@keyframes update {
+    from {opacity:0}
+    to { opacity: 1}
+}
+
+.oddContainer {
+    display: block;
+    padding: 5px;
+    margin: 2 px;
+    background-color: lightgray;
+    color: black;
+    border-radius: 5px;
+    border: 0.5px solid white;
+    font-family: Arial, Helvetica, sans-serif;
+    animation-name: update;
+    animation-duration: 1s;
+}
+
+.selectedOdd {
+    composes: oddContainer;
+    background-color:lightgreen;
+}
+
+.oddInput {
+    padding: 2px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+.oddInput:focus {
+    background-color: lightblue;
+}
+
+.odd {
+    border: 1px solid white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    background-color: lightslategray;
+    margin: 0px 5px;
+    padding: 2px;
+}
